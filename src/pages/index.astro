@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig } from '../config/site';
+---
+
+<BaseLayout
+  title={`${siteConfig.name} | Pool Closing`}
+  description="Blue Horizon Pools pool-closing landing page foundation."
+>
+  <main class="container">
+    <section class="foundation" aria-labelledby="foundation-title">
+      <p class="eyebrow">Blue Horizon Pools</p>
+      <h1 id="foundation-title">Pool closing landing page foundation</h1>
+      <p>
+        The Astro foundation is ready. The full customer-facing landing page will be built in Build 2.
+      </p>
+      <a href={siteConfig.phoneHref}>Call {siteConfig.phoneDisplay}</a>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .foundation {
+    min-height: 100vh;
+    display: grid;
+    align-content: center;
+    gap: 1rem;
+    max-width: 46rem;
+    padding-block: 4rem;
+  }
+
+  .foundation > * {
+    margin: 0;
+  }
+
+  .eyebrow {
+    font-weight: 700;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    font-size: clamp(2.25rem, 8vw, 4.5rem);
+    line-height: 1.05;
+  }
+
+  p {
+    color: var(--color-muted);
+    font-size: 1.125rem;
+  }
+
+  a {
+    width: fit-content;
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius-md);
+    background: var(--color-primary);
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  a:hover,
+  a:focus-visible {
+    background: var(--color-primary-strong);
+  }
+</style>
