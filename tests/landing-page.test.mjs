@@ -5,14 +5,14 @@ import { readFile } from 'node:fs/promises';
 const page = await readFile('src/pages/index.astro', 'utf8');
 const config = await readFile('src/config/site.ts', 'utf8');
 
-test('landing page contains the required Build 2 sections', () => {
+test('landing page contains the required Build 2 content areas', () => {
   for (const marker of [
     'site-header',
     'hero',
     'trust-strip',
-    'scope-section',
+    'info-card',
     'process-section',
-    'pricing-section',
+    'pricing-card',
     'area-section',
     'quote-section',
     'faq-section',
@@ -41,6 +41,6 @@ test('page avoids fabricated testimonial and certification claims', () => {
 });
 
 test('page includes mobile responsive rules and reduced-motion support', () => {
-  assert.match(page, /@media \(max-width: 640px\)/);
+  assert.match(page, /@media\s*\(\s*max-width\s*:\s*640px\s*\)/);
   assert.match(page, /prefers-reduced-motion/);
 });
