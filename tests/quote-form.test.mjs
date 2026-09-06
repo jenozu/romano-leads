@@ -11,21 +11,13 @@ test('landing page renders the quote form component', () => {
   assert.match(landing, /<QuoteForm\s*\/>/);
 });
 
-test('quote form includes required contact and pool fields', () => {
+test('quote form includes required contact, attribution, and pool fields', () => {
   for (const token of [
-    'name="name"',
-    'name="phone"',
-    'name="email"',
-    'name="city"',
-    'name="postal_code"',
-    'name="timing"',
-    'name="pool_type"',
-    'name="cover_type"',
-    'name="photos"',
-    'name="contact_consent"',
-  ]) {
-    assert.match(form, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-  }
+    'name="name"','name="phone"','name="email"','name="city"','name="postal_code"',
+    'name="timing"','name="pool_type"','name="cover_type"','name="photos"','name="contact_consent"',
+    'name="utm_source"','name="utm_medium"','name="utm_campaign"','name="utm_content"','name="utm_term"',
+    'name="landing_path"','name="referrer"',
+  ]) assert.match(form, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
 });
 
 test('photo upload accepts multiple mobile-friendly image formats and enforces configured limits', () => {
@@ -39,7 +31,7 @@ test('photo upload accepts multiple mobile-friendly image formats and enforces c
 test('form provides photo preview removal and duplicate submit protection', () => {
   assert.match(form, /photo-preview-grid/);
   assert.match(form, /photo-remove/);
-  assert.match(form, /submitButton\.disabled = true/);
+  assert.match(form, /submitButton\.disabled=true/);
 });
 
 test('form includes custom validation for phone, email, postal code, pool details, photos, and consent', () => {
@@ -48,7 +40,7 @@ test('form includes custom validation for phone, email, postal code, pool detail
   assert.match(form, /validatePostalCode/);
   assert.match(form, /pool_type/);
   assert.match(form, /cover_type/);
-  assert.match(form, /selectedFiles\.length === 0/);
+  assert.match(form, /selectedFiles\.length===0/);
   assert.match(form, /contact-consent/);
 });
 
@@ -62,6 +54,9 @@ test('thank-you and privacy pages exist', async () => {
   await access('src/pages/privacy.astro');
 });
 
-test('Build 3 uses a front-end success path ready for Build 4 replacement', () => {
-  assert.match(form, /window\.location\.assign\('\/thank-you'\)/);
+test('form submits multipart data to the Build 4 lead endpoint and redirects only after success', () => {
+  assert.match(form, /fetch\('\/api\/leads'/);
+  assert.match(form, /new FormData\(form\)/);
+  assert.match(form, /window\.location\.assign\(`\/thank-you\?lead=/);
+  assert.match(form, /Your information is still here/);
 });
