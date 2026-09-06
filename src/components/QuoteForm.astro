@@ -1,0 +1,794 @@
+---
+import { quoteFormConfig } from '../config/form';
+---
+
+<form
+  id="pool-quote-form"
+  class="quote-form"
+  action="/thank-you"
+  method="get"
+  novalidate
+  data-max-files={quoteFormConfig.maxFiles}
+  data-max-file-size={quoteFormConfig.maxFileSizeBytes}
+  data-photo-required={String(quoteFormConfig.photoRequired)}
+>
+  <input type="hidden" name="service" value="pool-closing" />
+  <input type="hidden" name="form_started_at" id="form-started-at" value="" />
+
+  <div class="honeypot" aria-hidden="true">
+    <label for="company">Company</label>
+    <input id="company" name="company" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="form-progress" aria-hidden="true">
+    <span class="active">1</span>
+    <i></i>
+    <span>2</span>
+    <i></i>
+    <span>3</span>
+  </div>
+
+  <fieldset>
+    <legend>Contact details</legend>
+    <p class="fieldset-help">Where should Blue Horizon Pools reach you about this request?</p>
+
+    <div class="field-grid two-col">
+      <div class="field">
+        <label for="full-name">Full name <span aria-hidden="true">*</span></label>
+        <input id="full-name" name="name" type="text" autocomplete="name" required aria-describedby="full-name-error" />
+        <p class="field-error" id="full-name-error" data-error-for="full-name" aria-live="polite"></p>
+      </div>
+
+      <div class="field">
+        <label for="phone">Phone number <span aria-hidden="true">*</span></label>
+        <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="647-555-0123" aria-describedby="phone-error" />
+        <p class="field-error" id="phone-error" data-error-for="phone" aria-live="polite"></p>
+      </div>
+
+      <div class="field">
+        <label for="email">Email address <span aria-hidden="true">*</span></label>
+        <input id="email" name="email" type="email" inputmode="email" autocomplete="email" required placeholder="you@example.com" aria-describedby="email-error" />
+        <p class="field-error" id="email-error" data-error-for="email" aria-live="polite"></p>
+      </div>
+
+      <div class="field">
+        <label for="contact-method">Preferred contact</label>
+        <select id="contact-method" name="contact_method">
+          {quoteFormConfig.contactMethods.map((option) => (
+            <option value={option.value}>{option.label}</option>
+          ))}
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="city">City <span aria-hidden="true">*</span></label>
+        <input id="city" name="city" type="text" autocomplete="address-level2" required aria-describedby="city-error" />
+        <p class="field-error" id="city-error" data-error-for="city" aria-live="polite"></p>
+      </div>
+
+      <div class="field">
+        <label for="postal-code">Postal code <span aria-hidden="true">*</span></label>
+        <input id="postal-code" name="postal_code" type="text" inputmode="text" autocomplete="postal-code" required placeholder="L5B 1M2" maxlength="7" aria-describedby="postal-code-error" />
+        <p class="field-error" id="postal-code-error" data-error-for="postal-code" aria-live="polite"></p>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Pool closing details</legend>
+    <p class="fieldset-help">A few details help Romano understand the job before calling you.</p>
+
+    <div class="field-grid two-col">
+      <div class="field">
+        <label for="timing">When would you like the pool closed? <span aria-hidden="true">*</span></label>
+        <select id="timing" name="timing" required aria-describedby="timing-error">
+          <option value="">Choose a timeframe</option>
+          {quoteFormConfig.timingOptions.map((option) => (
+            <option value={option.value}>{option.label}</option>
+          ))}
+        </select>
+        <p class="field-error" id="timing-error" data-error-for="timing" aria-live="polite"></p>
+      </div>
+
+      <div class="field">
+        <label for="pool-size">Approximate pool size</label>
+        <input id="pool-size" name="pool_size" type="text" placeholder="e.g. 16 × 32 ft" />
+      </div>
+    </div>
+
+    <div class="choice-group" role="group" aria-labelledby="pool-type-label" aria-describedby="pool-type-error">
+      <p id="pool-type-label" class="choice-label">Pool type <span aria-hidden="true">*</span></p>
+      <div class="choice-cards">
+        {quoteFormConfig.poolTypeOptions.map((option) => (
+          <label class="choice-card">
+            <input type="radio" name="pool_type" value={option.value} required />
+            <span>{option.label}</span>
+          </label>
+        ))}
+      </div>
+      <p class="field-error" id="pool-type-error" data-error-for="pool-type" aria-live="polite"></p>
+    </div>
+
+    <div class="choice-group" role="group" aria-labelledby="cover-type-label" aria-describedby="cover-type-error">
+      <p id="cover-type-label" class="choice-label">Cover type <span aria-hidden="true">*</span></p>
+      <div class="choice-cards">
+        {quoteFormConfig.coverTypeOptions.map((option) => (
+          <label class="choice-card">
+            <input type="radio" name="cover_type" value={option.value} required />
+            <span>{option.label}</span>
+          </label>
+        ))}
+      </div>
+      <p class="field-error" id="cover-type-error" data-error-for="cover-type" aria-live="polite"></p>
+    </div>
+
+    <div class="field">
+      <label for="notes">Anything else we should know?</label>
+      <textarea id="notes" name="notes" rows="4" placeholder="Tell us about access, unusual equipment, timing, or anything else that may help."></textarea>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Pool photos</legend>
+    <p class="fieldset-help">Please include the pool, cover, and equipment area when possible. At least one photo is required for this quote request.</p>
+
+    <div class="upload-zone" id="upload-zone">
+      <input
+        id="photos"
+        name="photos"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        multiple
+        required={quoteFormConfig.photoRequired}
+        aria-describedby="photo-help photos-error"
+      />
+      <label for="photos" class="upload-label">
+        <span class="upload-icon" aria-hidden="true">＋</span>
+        <strong>Add pool photos</strong>
+        <span>Choose up to {quoteFormConfig.maxFiles} JPG, PNG, or WebP images</span>
+        <small id="photo-help">Maximum 8 MB per image</small>
+      </label>
+    </div>
+
+    <div class="photo-preview-grid" id="photo-preview-grid" aria-live="polite"></div>
+    <p class="field-error" id="photos-error" data-error-for="photos" aria-live="polite"></p>
+  </fieldset>
+
+  <div class="consent-block">
+    <label class="consent-row" for="contact-consent">
+      <input id="contact-consent" name="contact_consent" type="checkbox" value="yes" required aria-describedby="contact-consent-error" />
+      <span>
+        I agree that Blue Horizon Pools may use the information I submit to contact me about this pool-service request. <a href="/privacy">Privacy notice</a>.
+      </span>
+    </label>
+    <p class="field-error" id="contact-consent-error" data-error-for="contact-consent" aria-live="polite"></p>
+  </div>
+
+  <div class="submit-row">
+    <button class="submit-button" type="submit">
+      <span class="submit-label">Request My Pool Closing Quote</span>
+      <span class="submit-spinner" aria-hidden="true"></span>
+    </button>
+    <p class="submit-note">Your details are reviewed before a closing package is confirmed.</p>
+  </div>
+
+  <div class="form-alert" id="form-alert" role="alert" aria-live="assertive"></div>
+</form>
+
+<script>
+  const form = document.querySelector('#pool-quote-form');
+
+  if (form instanceof HTMLFormElement) {
+    const photoInput = form.querySelector('#photos');
+    const previewGrid = form.querySelector('#photo-preview-grid');
+    const formAlert = form.querySelector('#form-alert');
+    const submitButton = form.querySelector('button[type="submit"]');
+    const startedAt = form.querySelector('#form-started-at');
+
+    if (startedAt instanceof HTMLInputElement) {
+      startedAt.value = String(Date.now());
+    }
+
+    const maxFiles = Number(form.dataset.maxFiles || 4);
+    const maxFileSize = Number(form.dataset.maxFileSize || 8388608);
+    const photoRequired = form.dataset.photoRequired === 'true';
+    const acceptedTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
+    let selectedFiles = [];
+
+    const setError = (id, message) => {
+      const error = form.querySelector(`[data-error-for="${id}"]`);
+      if (error instanceof HTMLElement) error.textContent = message;
+
+      const field = form.querySelector(`#${CSS.escape(id)}`);
+      if (field instanceof HTMLElement) {
+        if (message) field.setAttribute('aria-invalid', 'true');
+        else field.removeAttribute('aria-invalid');
+      }
+    };
+
+    const clearErrors = () => {
+      form.querySelectorAll('.field-error').forEach((node) => {
+        node.textContent = '';
+      });
+      form.querySelectorAll('[aria-invalid="true"]').forEach((node) => {
+        node.removeAttribute('aria-invalid');
+      });
+      if (formAlert instanceof HTMLElement) formAlert.textContent = '';
+    };
+
+    const validatePostalCode = (value) => /^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ][ -]?\d[ABCEGHJKLMNPRSTVWXYZ]\d$/i.test(value.trim());
+    const validatePhone = (value) => value.replace(/\D/g, '').length >= 10;
+
+    const syncFileInput = () => {
+      if (!(photoInput instanceof HTMLInputElement)) return;
+      const transfer = new DataTransfer();
+      selectedFiles.forEach((file) => transfer.items.add(file));
+      photoInput.files = transfer.files;
+    };
+
+    const renderPreviews = () => {
+      if (!(previewGrid instanceof HTMLElement)) return;
+      previewGrid.innerHTML = '';
+
+      selectedFiles.forEach((file, index) => {
+        const item = document.createElement('div');
+        item.className = 'photo-preview';
+
+        const image = document.createElement('img');
+        image.alt = `Selected pool photo ${index + 1}`;
+        image.src = URL.createObjectURL(file);
+        image.addEventListener('load', () => URL.revokeObjectURL(image.src), { once: true });
+
+        const meta = document.createElement('div');
+        meta.className = 'photo-meta';
+        const name = document.createElement('span');
+        name.textContent = file.name;
+        const size = document.createElement('small');
+        size.textContent = `${(file.size / (1024 * 1024)).toFixed(1)} MB`;
+        meta.append(name, size);
+
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'photo-remove';
+        remove.setAttribute('aria-label', `Remove ${file.name}`);
+        remove.textContent = '×';
+        remove.addEventListener('click', () => {
+          selectedFiles.splice(index, 1);
+          syncFileInput();
+          renderPreviews();
+          setError('photos', '');
+        });
+
+        item.append(image, meta, remove);
+        previewGrid.append(item);
+      });
+    };
+
+    if (photoInput instanceof HTMLInputElement) {
+      photoInput.addEventListener('change', () => {
+        setError('photos', '');
+        const incoming = Array.from(photoInput.files || []);
+        const valid = [];
+
+        for (const file of incoming) {
+          if (!acceptedTypes.has(file.type)) {
+            setError('photos', 'Please choose JPG, PNG, or WebP images only.');
+            continue;
+          }
+          if (file.size > maxFileSize) {
+            setError('photos', 'Each photo must be 8 MB or smaller.');
+            continue;
+          }
+          valid.push(file);
+        }
+
+        if (valid.length > maxFiles) {
+          setError('photos', `Please choose no more than ${maxFiles} photos.`);
+          selectedFiles = valid.slice(0, maxFiles);
+        } else {
+          selectedFiles = valid;
+        }
+
+        syncFileInput();
+        renderPreviews();
+      });
+    }
+
+    const validate = () => {
+      clearErrors();
+      let firstInvalid = null;
+
+      const requireText = (id, label) => {
+        const input = form.querySelector(`#${CSS.escape(id)}`);
+        if (input instanceof HTMLInputElement && !input.value.trim()) {
+          setError(id, `${label} is required.`);
+          firstInvalid ||= input;
+          return false;
+        }
+        return true;
+      };
+
+      requireText('full-name', 'Full name');
+      requireText('phone', 'Phone number');
+      requireText('email', 'Email address');
+      requireText('city', 'City');
+      requireText('postal-code', 'Postal code');
+
+      const phone = form.querySelector('#phone');
+      if (phone instanceof HTMLInputElement && phone.value.trim() && !validatePhone(phone.value)) {
+        setError('phone', 'Enter a valid phone number with at least 10 digits.');
+        firstInvalid ||= phone;
+      }
+
+      const email = form.querySelector('#email');
+      if (email instanceof HTMLInputElement && email.value.trim() && !email.validity.valid) {
+        setError('email', 'Enter a valid email address.');
+        firstInvalid ||= email;
+      }
+
+      const postal = form.querySelector('#postal-code');
+      if (postal instanceof HTMLInputElement && postal.value.trim() && !validatePostalCode(postal.value)) {
+        setError('postal-code', 'Enter a valid Canadian postal code, such as L5B 1M2.');
+        firstInvalid ||= postal;
+      }
+
+      const timing = form.querySelector('#timing');
+      if (timing instanceof HTMLSelectElement && !timing.value) {
+        setError('timing', 'Choose when you would like the pool closed.');
+        firstInvalid ||= timing;
+      }
+
+      const poolType = form.querySelector('input[name="pool_type"]:checked');
+      if (!(poolType instanceof HTMLInputElement)) {
+        setError('pool-type', 'Choose a pool type.');
+        firstInvalid ||= form.querySelector('input[name="pool_type"]');
+      }
+
+      const coverType = form.querySelector('input[name="cover_type"]:checked');
+      if (!(coverType instanceof HTMLInputElement)) {
+        setError('cover-type', 'Choose a cover type or select “Not sure”.');
+        firstInvalid ||= form.querySelector('input[name="cover_type"]');
+      }
+
+      if (photoRequired && selectedFiles.length === 0) {
+        setError('photos', 'Please add at least one pool photo.');
+        firstInvalid ||= photoInput;
+      }
+
+      const consent = form.querySelector('#contact-consent');
+      if (consent instanceof HTMLInputElement && !consent.checked) {
+        setError('contact-consent', 'Please agree to be contacted about this quote request.');
+        firstInvalid ||= consent;
+      }
+
+      const honeypot = form.querySelector('#company');
+      if (honeypot instanceof HTMLInputElement && honeypot.value) {
+        if (formAlert instanceof HTMLElement) formAlert.textContent = 'Unable to submit this request.';
+        firstInvalid ||= honeypot;
+      }
+
+      return firstInvalid;
+    };
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const firstInvalid = validate();
+
+      if (firstInvalid instanceof HTMLElement) {
+        firstInvalid.focus();
+        return;
+      }
+
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = true;
+        submitButton.classList.add('is-submitting');
+      }
+
+      // Build 3 uses a front-end success path. Build 4 replaces this with the real server submission endpoint.
+      window.setTimeout(() => {
+        window.location.assign('/thank-you');
+      }, 300);
+    });
+  }
+</script>
+
+<style>
+  .quote-form {
+    display: grid;
+    gap: 1.4rem;
+    padding: clamp(1.1rem, 3vw, 1.6rem);
+    border-radius: 1.4rem;
+    background: white;
+    color: var(--color-text);
+    box-shadow: 0 20px 45px rgba(5, 36, 50, 0.18);
+  }
+
+  .honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .form-progress {
+    display: grid;
+    grid-template-columns: auto 1fr auto 1fr auto;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .form-progress span {
+    width: 1.9rem;
+    height: 1.9rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    color: var(--color-muted);
+    font-size: 0.78rem;
+    font-weight: 900;
+  }
+
+  .form-progress span.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+  }
+
+  .form-progress i {
+    height: 1px;
+    background: var(--color-border);
+  }
+
+  fieldset {
+    margin: 0;
+    padding: 1.2rem 0 0;
+    border: 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  legend {
+    padding: 0;
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+
+  .fieldset-help {
+    margin: 0.35rem 0 1rem;
+    color: var(--color-muted);
+    font-size: 0.92rem;
+  }
+
+  .field-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .two-col {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .field {
+    min-width: 0;
+  }
+
+  label,
+  .choice-label {
+    display: block;
+    margin: 0 0 0.4rem;
+    font-size: 0.88rem;
+    font-weight: 800;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-height: 3rem;
+    border: 1px solid #c9d8e2;
+    border-radius: 0.8rem;
+    background: #fbfdff;
+    color: var(--color-text);
+    font: inherit;
+    padding: 0.72rem 0.85rem;
+    outline: none;
+    transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 6.8rem;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--color-primary);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(13, 110, 158, 0.12);
+  }
+
+  [aria-invalid="true"] {
+    border-color: #b63737 !important;
+  }
+
+  .field-error {
+    min-height: 1.2em;
+    margin: 0.28rem 0 0;
+    color: #a62e2e;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  .choice-group {
+    margin-top: 1rem;
+  }
+
+  .choice-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  .choice-card {
+    position: relative;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .choice-card input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .choice-card span {
+    min-height: 3rem;
+    display: grid;
+    place-items: center;
+    padding: 0.65rem;
+    border: 1px solid #c9d8e2;
+    border-radius: 0.8rem;
+    background: #fbfdff;
+    text-align: center;
+    font-size: 0.84rem;
+    font-weight: 800;
+  }
+
+  .choice-card input:checked + span {
+    border-color: var(--color-primary);
+    background: #e8f7fb;
+    color: var(--color-primary-strong);
+    box-shadow: inset 0 0 0 1px var(--color-primary);
+  }
+
+  .choice-card input:focus-visible + span {
+    outline: 3px solid rgba(13, 110, 158, 0.25);
+    outline-offset: 2px;
+  }
+
+  .upload-zone {
+    position: relative;
+    border: 1.5px dashed #9bbdcb;
+    border-radius: 1rem;
+    background: #f4fafc;
+    overflow: hidden;
+  }
+
+  .upload-zone input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .upload-label {
+    margin: 0;
+    min-height: 9rem;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 0.25rem;
+    padding: 1.2rem;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .upload-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+    display: grid;
+    place-items: center;
+    margin-bottom: 0.25rem;
+    border-radius: 50%;
+    background: #dff3f9;
+    color: var(--color-primary-strong);
+    font-size: 1.3rem;
+    font-weight: 900;
+  }
+
+  .upload-label > span:not(.upload-icon),
+  .upload-label small {
+    color: var(--color-muted);
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .photo-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin-top: 0.75rem;
+  }
+
+  :global(.photo-preview) {
+    position: relative;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 4.4rem 1fr auto;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.55rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.85rem;
+    background: #fbfdff;
+  }
+
+  :global(.photo-preview img) {
+    width: 4.4rem;
+    height: 3.4rem;
+    object-fit: cover;
+    border-radius: 0.55rem;
+  }
+
+  :global(.photo-meta) {
+    min-width: 0;
+  }
+
+  :global(.photo-meta span),
+  :global(.photo-meta small) {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  :global(.photo-meta span) {
+    font-size: 0.8rem;
+    font-weight: 800;
+  }
+
+  :global(.photo-meta small) {
+    color: var(--color-muted);
+    font-size: 0.72rem;
+  }
+
+  :global(.photo-remove) {
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: 50%;
+    background: #eef3f6;
+    color: #5b6974;
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  .consent-block {
+    padding: 1rem;
+    border-radius: 0.9rem;
+    background: #f5f9fb;
+  }
+
+  .consent-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: 0.65rem;
+    margin: 0;
+    color: #405261;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .consent-row input {
+    width: 1.1rem;
+    height: 1.1rem;
+    min-height: 0;
+    margin-top: 0.1rem;
+    padding: 0;
+  }
+
+  .consent-row a {
+    color: var(--color-primary-strong);
+  }
+
+  .submit-row {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .submit-button {
+    min-height: 3.5rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--color-primary);
+    color: white;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 900;
+    box-shadow: 0 12px 25px rgba(13, 110, 158, 0.2);
+  }
+
+  .submit-button:focus-visible {
+    outline: 3px solid rgba(13, 110, 158, 0.28);
+    outline-offset: 3px;
+  }
+
+  .submit-button:disabled {
+    opacity: 0.72;
+    cursor: wait;
+  }
+
+  .submit-spinner {
+    display: none;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  .submit-button.is-submitting .submit-label {
+    display: none;
+  }
+
+  .submit-button.is-submitting .submit-spinner {
+    display: inline-block;
+  }
+
+  .submit-note {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 0.76rem;
+    text-align: center;
+  }
+
+  .form-alert {
+    min-height: 1px;
+    color: #a62e2e;
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 720px) {
+    .two-col,
+    .photo-preview-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .choice-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 420px) {
+    .choice-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .submit-spinner {
+      animation: none;
+    }
+  }
+</style>
